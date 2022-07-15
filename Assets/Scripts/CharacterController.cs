@@ -6,8 +6,8 @@ public class CharacterController : MonoBehaviour
 {
 
     private Rigidbody2D rb; 
-    public float runSpeed = 30f; 
-    public float jumpSpeed = 50f; 
+    public float runSpeed = 20f; 
+    public float jumpSpeed = 20f; 
 
     private Vector2 velocity = Vector2.zero;
 
@@ -24,6 +24,11 @@ public class CharacterController : MonoBehaviour
     void Update()
     {
         var move = Input.GetAxisRaw("Horizontal") * runSpeed * Time.deltaTime;
+
+        // Flip. Get the transform modulus and make it negative if the pressed key was left
+        var newx = Mathf.Abs(this.transform.localScale.x) * Mathf.Sign(move); 
+        transform.localScale = new Vector3(newx, transform.localScale.y, transform.localScale.z);
+
         var jump = Input.GetAxisRaw("Vertical") * jumpSpeed * Time.deltaTime;
         jump = jump > 0 && isGrounded ? jump : 0; 
 
