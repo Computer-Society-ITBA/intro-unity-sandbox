@@ -16,21 +16,27 @@ public class CharacterController : MonoBehaviour
     private float groundRadius = 0.1f;  
     private bool isGrounded = false; 
 
+    private Animator animator; 
+
     void Start()
 	{
 		rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>(); 
 	}
 
     void Update()
     {
         var move = Input.GetAxisRaw("Horizontal") * runSpeed * Time.deltaTime;
+        animator.SetFloat("Move", move);
 
         // Flip. Get the transform modulus and make it negative if the pressed key was left
-        var newx = Mathf.Abs(this.transform.localScale.x) * Mathf.Sign(move); 
+        var newx = move == 0 ? transform.localScale.x : Mathf.Abs(this.transform.localScale.x) * Mathf.Sign(move); 
         transform.localScale = new Vector3(newx, transform.localScale.y, transform.localScale.z);
 
         var jump = Input.GetAxisRaw("Vertical") * jumpSpeed * Time.deltaTime;
         jump = jump > 0 && isGrounded ? jump : 0; 
+        animator.SetBool("IsJumping", !isGrounded);
+
 
 		Vector2 targetVelocity = new Vector2(move * 10f, rb.velocity.y + jump * 10f);
 		rb.velocity = Vector2.SmoothDamp(rb.velocity, targetVelocity, ref velocity, .05f);
